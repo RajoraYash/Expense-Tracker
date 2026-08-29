@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
+// PR
 @Entity
 @Table(name = "transactions")
 public class Transaction {
