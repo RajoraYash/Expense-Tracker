@@ -1,6 +1,9 @@
 package com.yash.expensetracker.Transaction;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
@@ -14,8 +17,15 @@ public class Transaction {
     private Long id;
     @Positive(message = "Amount must be Greater than zero")
     private BigDecimal amount;
+    @NotBlank(message = "Category cannot be Blank")
     private String category;
+    @NotBlank(message = "Type cannot be blank")
+    @Pattern(
+            regexp = "EXPENSE | INCOME",
+            message = "Type must be EXPENSE or INCOME"
+    )
     private String type;
+    @NotNull(message = "TransactionDate cannot be null")
     private LocalDate transactionDate;
     private String description;
 

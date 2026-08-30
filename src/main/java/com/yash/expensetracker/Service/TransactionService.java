@@ -4,6 +4,7 @@ import com.yash.expensetracker.Repository.TransactionRepository;
 import com.yash.expensetracker.Transaction.Transaction;
 import com.yash.expensetracker.dto.CategoryExpense;
 import com.yash.expensetracker.dto.MonthlyExpense;
+import com.yash.expensetracker.exception.TransactionNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -22,17 +23,20 @@ public class TransactionService {
         return transactionRepository.findAll();
     }
     public Transaction getTransactionById(Long id){
-        return transactionRepository.findById(id).orElse(null);
+        return transactionRepository.findById(id).orElseThrow(()->
+                new TransactionNotFoundException("Transaction not found with id : " + id));
     }
     public void deleteTransactionById(Long id){
+        if(!transactionRepository.existsById(id)){
+            throw new TransactionNotFoundException("Transaction not found by id : " + id);
+
+        }
         transactionRepository.deleteById(id);
     }
     public Transaction updateTransaction(Long id ,Transaction updatedTransaction){
         Transaction existingTransaction =
-                transactionRepository.findById(id).orElse(null);
-        if(existingTransaction==null){
-            return null;
-        }
+                transactionRepository.findById(id).orElseThrow(()->
+                        new TransactionNotFoundException("Transaction not found with id : " + id));
         existingTransaction.setAmount(updatedTransaction.getAmount());
         existingTransaction.setCategory(updatedTransaction.getCategory());
         existingTransaction.setTransactionDate(updatedTransaction.getTransactionDate());
