@@ -110,5 +110,16 @@ public class TransactionController {
     public List<MonthlyExpense> getMonthlyExpenses(){
         return transactionService.getMonthlyExpenses();
     }
+    @GetMapping("/transactions/filter")
+    @Operation(
+            summary = "Filtered transactions",
+            description = "Returns transactions filtered by type and category"
+    )
+    public List<Transaction> filterTransactions(
+            @RequestParam(required = false)String type,
+            @RequestParam(required = false) String category
+    ){
+        return transactionService.getTransactionsByFilters(type,category);
+    }
 }
 

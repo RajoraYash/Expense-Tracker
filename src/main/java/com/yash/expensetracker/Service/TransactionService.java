@@ -62,4 +62,10 @@ public class TransactionService {
     public List<MonthlyExpense> getMonthlyExpenses(){
         return transactionRepository.getMonthlyExpenses();
     }
+    public List<Transaction> getTransactionsByFilters(
+            String type,
+            String category){
+        return transactionRepository.findByFilters(type,category);
+
+    }
 }
