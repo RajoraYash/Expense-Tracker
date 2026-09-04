@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -120,6 +121,17 @@ public class TransactionController {
             @RequestParam(required = false) String category
     ){
         return transactionService.getTransactionsByFilters(type,category);
+    }
+    @GetMapping("/transactions/page")
+    @Operation(
+            summary = "Get paginated transactions",
+            description = "Returns transactions in pages"
+    )
+    public Page<Transaction> getTransactionsWithPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return transactionService.getTransactionsWithPaginatiopn(page,size);
     }
 }
 

@@ -5,6 +5,10 @@ import com.yash.expensetracker.Transaction.Transaction;
 import com.yash.expensetracker.dto.CategoryExpense;
 import com.yash.expensetracker.dto.MonthlyExpense;
 import com.yash.expensetracker.exception.TransactionNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -21,6 +25,13 @@ public class TransactionService {
     }
     public List<Transaction> getAllTransactions(){
         return transactionRepository.findAll();
+    }
+    public Page<Transaction> getTransactionsWithPaginatiopn(
+            int page,
+            int size
+    ){
+        Pageable pageable = PageRequest.of(page,size);
+        return transactionRepository.findAll(pageable);
     }
     public Transaction getTransactionById(Long id){
         return transactionRepository.findById(id).orElseThrow(()->
