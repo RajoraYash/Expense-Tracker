@@ -1,6 +1,6 @@
 package com.yash.expensetracker.Controller;
 
-import com.yash.expensetracker.Repository.TransactionRepository;
+
 import com.yash.expensetracker.Service.TransactionService;
 import com.yash.expensetracker.Transaction.Transaction;
 import com.yash.expensetracker.dto.CategoryExpense;
@@ -59,7 +59,10 @@ public class TransactionController {
             description = "delete a existing transaction using id"
     )
     @DeleteMapping("/transactions/{id}")
-    public void deleteTransactionById(@PathVariable Long id){
+    public void deleteTransactionById(@Parameter(
+            description = "ID of the transaction",
+            example = "12"
+    )@PathVariable Long id){
         transactionService.deleteTransactionById(id);
     }
     @Operation(
@@ -67,8 +70,10 @@ public class TransactionController {
             description = "Update existing transaction using id"
     )
     @PutMapping("/transactions/{id}")
-    public Transaction updateTransaction(@PathVariable Long id,
-    @RequestBody Transaction transaction){
+    public Transaction updateTransaction(@Parameter(
+            description = "ID of the transaction", example = "12")
+                                             @PathVariable Long id,
+     @Valid @RequestBody Transaction transaction){
         return transactionService.updateTransaction(id,transaction);
     }
     @Operation(
@@ -117,7 +122,15 @@ public class TransactionController {
             description = "Returns transactions filtered by type and category"
     )
     public List<Transaction> filterTransactions(
+            @Parameter(
+                    description = "Transaction type",
+                    example = "EXPENSE"
+            )
             @RequestParam(required = false)String type,
+            @Parameter(
+                    description = "Transaction Category",
+                    example = "Food"
+            )
             @RequestParam(required = false) String category
     ){
         return transactionService.getTransactionsByFilters(type,category);
@@ -128,10 +141,18 @@ public class TransactionController {
             description = "Returns transactions in pages"
     )
     public Page<Transaction> getTransactionsWithPagination(
+            @Parameter(
+                    description = "Page number (starts from 0)",
+                    example = "0"
+            )
             @RequestParam(defaultValue = "0") int page,
+            @Parameter(
+                    description = "Number of transactions per page",
+                    example = "10"
+            )
             @RequestParam(defaultValue = "10") int size
     ){
-        return transactionService.getTransactionsWithPaginatiopn(page,size);
+        return transactionService.getTransactionsWithPagination(page,size);
     }
 }
 

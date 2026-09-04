@@ -21,7 +21,7 @@ public class Transaction {
     private String category;
     @NotBlank(message = "Type cannot be blank")
     @Pattern(
-            regexp = "EXPENSE | INCOME",
+            regexp = "EXPENSE|INCOME",
             message = "Type must be EXPENSE or INCOME"
     )
     private String type;

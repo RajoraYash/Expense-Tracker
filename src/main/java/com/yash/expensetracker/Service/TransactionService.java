@@ -8,7 +8,6 @@ import com.yash.expensetracker.exception.TransactionNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,7 +25,7 @@ public class TransactionService {
     public List<Transaction> getAllTransactions(){
         return transactionRepository.findAll();
     }
-    public Page<Transaction> getTransactionsWithPaginatiopn(
+    public Page<Transaction> getTransactionsWithPagination(
             int page,
             int size
     ){
