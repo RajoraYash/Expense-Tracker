@@ -1,11 +1,17 @@
-function TransactionList(){
-    return(
-        <section>
-            <h2>Transactions</h2>
-            <div>
-            <p>Food | EXPENSE | ₹500</p>
-        <p>Salary | INCOME | ₹40,000</p>
-            </div>
-        </section>    )
+function TransactionList({ transactions }) {
+  return (
+    <section>
+      <h2>Transactions</h2>
+
+      <div>
+        {transactions.map(transaction => (
+          <p key={transaction.id}>
+            {transaction.category} | {transaction.type} | ₹{transaction.amount}
+          </p>
+        ))}
+      </div>
+    </section>
+  )
 }
+
 export default TransactionList
