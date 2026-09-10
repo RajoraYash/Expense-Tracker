@@ -9,6 +9,7 @@ function App() {
   const [balance, setBalance] = useState(0)
 const [income, setIncome] = useState(0)
 const [expenses, setExpenses] = useState(0)
+const [editingTransaction, setEditingTransaction] = useState(null)
 
   const fetchTransactions = () => {
     fetch('http://localhost:8080/transactions')
@@ -45,11 +46,23 @@ const [expenses, setExpenses] = useState(0)
   expenses={expenses}
 />
 
-      <AddTransaction onTransactionAdded={ () => {fetchTransactions()
-        fetchSummary()}
-      } />
+     <AddTransaction
+  editingTransaction={editingTransaction}
+  onTransactionAdded={() => {
+    fetchTransactions()
+    fetchSummary()
+    setEditingTransaction(null)
+  }}
+/>
 
-      <TransactionList transactions={transactions} />
+   <TransactionList
+  transactions={transactions}
+  onTransactionDeleted={() => {
+    fetchTransactions()
+    fetchSummary()
+  }}
+  onEdit={setEditingTransaction}
+/>
     </div>
   )
 }

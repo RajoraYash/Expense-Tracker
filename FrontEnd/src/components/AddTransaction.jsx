@@ -1,6 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-function AddTransaction({ onTransactionAdded }) {
+function AddTransaction({
+  editingTransaction,
+  onTransactionAdded
+}) {
   const [formData, setFormData] = useState({
     amount: '',
     category: '',
@@ -9,33 +12,63 @@ function AddTransaction({ onTransactionAdded }) {
     description: ''
   })
 
+  useEffect(() => {
+    if (editingTransaction) {
+      setFormData({
+        amount: editingTransaction.amount,
+        category: editingTransaction.category,
+        type: editingTransaction.type,
+        transactionDate: editingTransaction.transactionDate,
+        description: editingTransaction.description || ''
+      })
+    }
+  }, [editingTransaction])
+
   const handleSubmit = (e) => {
     e.preventDefault()
 
-fetch('http://localhost:8080/transactions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(formData)
-  })
-  .then(response => response.json())
-    .then(data => {
-      console.log('Transaction added:', data)
-      setFormData({
-    amount: '',
-    category: '',
-    type: 'EXPENSE',
-    transactionDate: '',
-    description: ''
-  })
-  onTransactionAdded()
+    const url = editingTransaction
+      ? `http://localhost:8080/transactions/${editingTransaction.id}`
+      : 'http://localhost:8080/transactions'
+
+    const method = editingTransaction ? 'PUT' : 'POST'
+
+    fetch(url, {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
     })
+      .then(response => response.json())
+      .then(data => {
+        console.log(
+          editingTransaction
+            ? 'Transaction updated:'
+            : 'Transaction added:',
+          data
+        )
+
+        setFormData({
+          amount: '',
+          category: '',
+          type: 'EXPENSE',
+          transactionDate: '',
+          description: ''
+        })
+
+        onTransactionAdded()
+      })
+      .catch(error => {
+        console.error(error)
+      })
   }
 
   return (
     <section>
-      <h2>Add Transaction</h2>
+      <h2>
+        {editingTransaction ? 'Edit Transaction' : 'Add Transaction'}
+      </h2>
 
       <form onSubmit={handleSubmit}>
 
@@ -99,7 +132,9 @@ fetch('http://localhost:8080/transactions', {
           }
         />
 
-        <button type="submit">Add Transaction</button>
+        <button type="submit">
+          {editingTransaction ? 'Update Transaction' : 'Add Transaction'}
+        </button>
 
       </form>
     </section>
