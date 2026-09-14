@@ -4,6 +4,9 @@ function AddTransaction({
   editingTransaction,
   onTransactionAdded
 }) {
+  const [message, setMessage] = useState('')
+const [error, setError] = useState('')
+const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     amount: '',
     category: '',
@@ -24,52 +27,81 @@ function AddTransaction({
     }
   }, [editingTransaction])
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+ const handleSubmit = (e) => {
+  e.preventDefault()
 
-    const url = editingTransaction
-      ? `http://localhost:8080/transactions/${editingTransaction.id}`
-      : 'http://localhost:8080/transactions'
+  setLoading(true)
+  setMessage('')
+  setError('')
 
-    const method = editingTransaction ? 'PUT' : 'POST'
+  const url = editingTransaction
+    ? `http://localhost:8080/transactions/${editingTransaction.id}`
+    : 'http://localhost:8080/transactions'
 
-    fetch(url, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(
-          editingTransaction
-            ? 'Transaction updated:'
-            : 'Transaction added:',
-          data
+  const method = editingTransaction ? 'PUT' : 'POST'
+
+  fetch(url, {
+    method,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+    .then(async response => {
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(
+          Object.values(data).join(', ') || 'Something went wrong'
         )
+      }
 
-        setFormData({
-          amount: '',
-          category: '',
-          type: 'EXPENSE',
-          transactionDate: '',
-          description: ''
-        })
+      return data
+    })
+    .then(data => {
+      console.log('Success:', data)
 
-        onTransactionAdded()
+      setMessage(
+        editingTransaction
+          ? 'Transaction updated successfully!'
+          : 'Transaction added successfully!'
+      )
+
+      setFormData({
+        amount: '',
+        category: '',
+        type: 'EXPENSE',
+        transactionDate: '',
+        description: ''
       })
-      .catch(error => {
-        console.error(error)
-      })
-  }
+
+      onTransactionAdded()
+    })
+    .catch(error => {
+      console.error(error)
+      setError(error.message)
+    })
+    .finally(() => {
+      setLoading(false)
+    })
+}
 
   return (
-    <section>
+    <section className="form-section">
       <h2>
         {editingTransaction ? 'Edit Transaction' : 'Add Transaction'}
       </h2>
+{message && (
+  <div>
+    <p>{message}</p>
 
+    <button onClick={() => window.location.reload()}>
+      OK
+    </button>
+  </div>
+)}
+
+{error && <p>{error}</p>}
       <form onSubmit={handleSubmit}>
 
         <input
@@ -132,9 +164,13 @@ function AddTransaction({
           }
         />
 
-        <button type="submit">
-          {editingTransaction ? 'Update Transaction' : 'Add Transaction'}
-        </button>
+       <button type="submit" disabled={loading}>
+  {loading
+    ? 'Saving...'
+    : editingTransaction
+      ? 'Update Transaction'
+      : 'Add Transaction'}
+</button>
 
       </form>
     </section>

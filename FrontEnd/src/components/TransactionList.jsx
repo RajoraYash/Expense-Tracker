@@ -7,10 +7,44 @@ function TransactionList({
 }) {
   const [type, setType] = useState('')
   const [category, setCategory] = useState('')
+  const [filteredTransactions, setFilteredTransactions] = useState(transactions)
 
   useEffect(() => {
-    console.log('Selected filters:', type, category)
+    const fetchFilteredTransactions = async () => {
+      try {
+        let url = 'http://localhost:8080/transactions/filter'
+
+        const params = new URLSearchParams()
+
+        if (type) {
+          params.append('type', type)
+        }
+
+        if (category) {
+          params.append('category', category)
+        }
+
+        if (params.toString()) {
+          url += `?${params.toString()}`
+        }
+
+        const response = await fetch(url)
+        const data = await response.json()
+
+        setFilteredTransactions(data)
+      } catch (error) {
+        console.error('Filter error:', error)
+      }
+    }
+
+    fetchFilteredTransactions()
   }, [type, category])
+
+  useEffect(() => {
+    if (!type && !category) {
+      setFilteredTransactions(transactions)
+    }
+  }, [transactions, type, category])
 
   const handleDelete = (id) => {
     fetch(`http://localhost:8080/transactions/${id}`, {
@@ -29,10 +63,10 @@ function TransactionList({
   }
 
   return (
-    <section>
+    <section className="transactions-section">
       <h2>Transactions</h2>
 
-      <div>
+      <div className="filters">
         <select
           value={type}
           onChange={(e) => setType(e.target.value)}
@@ -63,7 +97,7 @@ function TransactionList({
         </thead>
 
         <tbody>
-          {transactions.map(transaction => (
+          {filteredTransactions.map(transaction => (
             <tr key={transaction.id}>
               <td>{transaction.transactionDate}</td>
               <td>{transaction.category}</td>
@@ -84,6 +118,10 @@ function TransactionList({
           ))}
         </tbody>
       </table>
+
+      {filteredTransactions.length === 0 && (
+        <p>No transactions found.</p>
+      )}
     </section>
   )
 }
