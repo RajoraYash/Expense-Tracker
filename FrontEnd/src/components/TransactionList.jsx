@@ -3,15 +3,29 @@ import { useEffect, useState } from 'react'
 function TransactionList({
   transactions,
   onTransactionDeleted,
-  onEdit
+  onEdit,
+  page,
+  totalPages,
+  onPageChange
 }) {
   const [type, setType] = useState('')
   const [category, setCategory] = useState('')
-  const [filteredTransactions, setFilteredTransactions] = useState(transactions)
+  const [filteredTransactions, setFilteredTransactions] =
+    useState(transactions)
+
+  const [isFiltering, setIsFiltering] = useState(false)
 
   useEffect(() => {
+    if (!type && !category) {
+      setFilteredTransactions(transactions)
+      setIsFiltering(false)
+      return
+    }
+
     const fetchFilteredTransactions = async () => {
       try {
+        setIsFiltering(true)
+
         let url = 'http://localhost:8080/transactions/filter'
 
         const params = new URLSearchParams()
@@ -24,9 +38,7 @@ function TransactionList({
           params.append('category', category)
         }
 
-        if (params.toString()) {
-          url += `?${params.toString()}`
-        }
+        url += `?${params.toString()}`
 
         const response = await fetch(url)
         const data = await response.json()
@@ -38,13 +50,7 @@ function TransactionList({
     }
 
     fetchFilteredTransactions()
-  }, [type, category])
-
-  useEffect(() => {
-    if (!type && !category) {
-      setFilteredTransactions(transactions)
-    }
-  }, [transactions, type, category])
+  }, [type, category, transactions])
 
   const handleDelete = (id) => {
     fetch(`http://localhost:8080/transactions/${id}`, {
@@ -62,9 +68,23 @@ function TransactionList({
       })
   }
 
+  const handlePrevious = () => {
+    if (page > 0) {
+      onPageChange(page - 1)
+    }
+  }
+
+  const handleNext = () => {
+    if (page < totalPages - 1) {
+      onPageChange(page + 1)
+    }
+  }
+
   return (
     <section className="transactions-section">
       <h2>Transactions</h2>
+
+      {/* Filters */}
 
       <div className="filters">
         <select
@@ -84,6 +104,8 @@ function TransactionList({
         />
       </div>
 
+      {/* Table */}
+
       <table>
         <thead>
           <tr>
@@ -100,17 +122,25 @@ function TransactionList({
           {filteredTransactions.map(transaction => (
             <tr key={transaction.id}>
               <td>{transaction.transactionDate}</td>
+
               <td>{transaction.category}</td>
+
               <td>{transaction.type}</td>
+
               <td>₹{transaction.amount}</td>
+
               <td>{transaction.description}</td>
 
               <td>
-                <button onClick={() => onEdit(transaction)}>
+                <button
+                  onClick={() => onEdit(transaction)}
+                >
                   Edit
                 </button>
 
-                <button onClick={() => handleDelete(transaction.id)}>
+                <button
+                  onClick={() => handleDelete(transaction.id)}
+                >
                   Delete
                 </button>
               </td>
@@ -121,6 +151,30 @@ function TransactionList({
 
       {filteredTransactions.length === 0 && (
         <p>No transactions found.</p>
+      )}
+
+      {/* Pagination */}
+
+      {!isFiltering && totalPages > 0 && (
+        <div className="pagination">
+          <button
+            onClick={handlePrevious}
+            disabled={page === 0}
+          >
+            Previous
+          </button>
+
+          <span>
+            Page {page + 1} of {totalPages}
+          </span>
+
+          <button
+            onClick={handleNext}
+            disabled={page === totalPages - 1}
+          >
+            Next
+          </button>
+        </div>
       )}
     </section>
   )

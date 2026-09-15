@@ -13,19 +13,20 @@ import {
   CartesianGrid
 } from 'recharts'
 
-function DashboardCharts() {
+function DashboardCharts({ refreshKey }) {
   const [categoryData, setCategoryData] = useState([])
   const [monthlyData, setMonthlyData] = useState([])
+  
 
-  useEffect(() => {
-    fetch('http://localhost:8080/analytics/category')
-      .then(response => response.json())
-      .then(data => setCategoryData(data))
+ useEffect(() => {
+  fetch('http://localhost:8080/analytics/category')
+    .then(response => response.json())
+    .then(data => setCategoryData(data))
 
-    fetch('http://localhost:8080/analytics/monthly')
-      .then(response => response.json())
-      .then(data => setMonthlyData(data))
-  }, [])
+  fetch('http://localhost:8080/analytics/monthly')
+    .then(response => response.json())
+    .then(data => setMonthlyData(data))
+}, [refreshKey])
 
   const formattedMonthlyData = monthlyData.map(item => ({
     month: `${item.year}-${String(item.month).padStart(2, '0')}`,
