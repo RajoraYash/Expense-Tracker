@@ -26,7 +26,7 @@ function TransactionList({
       try {
         setIsFiltering(true)
 
-        let url = 'http://localhost:8080/transactions/filter'
+        let url = 'https://expense-tracker-production-8e0f.up.railway.app/transactions/filter'
 
         const params = new URLSearchParams()
 
@@ -53,7 +53,7 @@ function TransactionList({
   }, [type, category, transactions])
 
   const handleDelete = (id) => {
-    fetch(`http://localhost:8080/transactions/${id}`, {
+    fetch(`https://expense-tracker-production-8e0f.up.railway.app/transactions/${id}`, {
       method: 'DELETE'
     })
       .then(response => {
