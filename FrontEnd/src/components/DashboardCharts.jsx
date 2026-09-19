@@ -19,11 +19,11 @@ function DashboardCharts({ refreshKey }) {
   
 
  useEffect(() => {
-  fetch('https://expense-tracker-production-8e0f.up.railway.app/analytics/category')
+  fetch('https://expense-tracker-production-accb.up.railway.app/analytics/category')
     .then(response => response.json())
     .then(data => setCategoryData(data))
 
-  fetch('https://expense-tracker-production-8e0f.up.railway.app/analytics/monthly')
+  fetch('https://expense-tracker-production-accb.up.railway.app/analytics/monthly')
     .then(response => response.json())
     .then(data => setMonthlyData(data))
 }, [refreshKey])

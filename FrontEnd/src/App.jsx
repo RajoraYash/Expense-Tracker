@@ -19,7 +19,7 @@ function App() {
 
   const fetchTransactions = () => {
     fetch(
-      `https://expense-tracker-production-8e0f.up.railway.app/transactions/page?page=${page}&size=10`
+      `https://expense-tracker-production-accb.up.railway.app/transactions/page?page=${page}&size=10`
     )
       .then(response => response.json())
       .then(data => {
@@ -32,15 +32,15 @@ function App() {
   }
 
   const fetchSummary = () => {
-    fetch('https://expense-tracker-production-8e0f.up.railway.app/analytics/balance')
+    fetch('https://expense-tracker-production-accb.up.railway.app/analytics/balance')
       .then(response => response.json())
       .then(data => setBalance(data))
 
-    fetch('https://expense-tracker-production-8e0f.up.railway.app/analytics/income')
+    fetch('https://expense-tracker-production-accb.up.railway.app/analytics/income')
       .then(response => response.json())
       .then(data => setIncome(data))
 
-    fetch('https://expense-tracker-production-8e0f.up.railway.app/analytics/expenses')
+    fetch('https://expense-tracker-production-accb.up.railway.app/analytics/expenses')
       .then(response => response.json())
       .then(data => setExpenses(data))
   }

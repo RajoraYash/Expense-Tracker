@@ -35,8 +35,8 @@ const [loading, setLoading] = useState(false)
   setError('')
 
   const url = editingTransaction
-    ? `https://expense-tracker-production-8e0f.up.railway.app/transactions/${editingTransaction.id}`
-    : 'https://expense-tracker-production-8e0f.up.railway.app/transactions'
+    ? `https://expense-tracker-production-accb.up.railway.app/transactions/${editingTransaction.id}`
+    : 'https://expense-tracker-production-accb.up.railway.app/transactions'
 
   const method = editingTransaction ? 'PUT' : 'POST'
 
